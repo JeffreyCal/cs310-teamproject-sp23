@@ -6,16 +6,19 @@ import java.util.HashMap;
 public class Shift {
 
     public Shift(HashMap<String, String> shiftrules) {
-        this.id = Integer.parseInt(shiftrules.get(id));
-        this.description = (shiftrules.get(description));
-        this.shiftstart = LocalTime.parse(shiftrules.get(shiftstart));
-        this.shiftstop = LocalTime.parse(shiftrules.get(shiftstop));
-        this.lunchstart = LocalTime.parse(shiftrules.get(lunchstart));
-        this.lunchstop = LocalTime.parse(shiftrules.get(lunchstop));
-        this.roundinterval = Integer.parseInt(shiftrules.get(roundinterval));
-        this.graceperiod = Integer.parseInt(shiftrules.get(graceperiod));
-        this.dockpenalty = Integer.parseInt(shiftrules.get(dockpenalty));
-        this.lunchthreshhold = Integer.parseInt(String.valueOf(lunchthreshhold));
+        this.id = Integer.parseInt(shiftrules.get("id"));
+        this.description = (shiftrules.get("description"));
+        this.shiftstart = LocalTime.parse(shiftrules.get("shiftstart"));
+        this.shiftstop = LocalTime.parse(shiftrules.get("shiftstop"));
+        this.lunchstart = LocalTime.parse(shiftrules.get("lunchstart"));
+        this.lunchstop = LocalTime.parse(shiftrules.get("lunchstop"));
+        this.roundinterval = Integer.parseInt(shiftrules.get("roundinterval"));
+        this.graceperiod = Integer.parseInt(shiftrules.get("graceperiod"));
+        this.dockpenalty = Integer.parseInt(shiftrules.get("dockpenalty"));
+        this.lunchthreshold = Integer.parseInt(shiftrules.get("lunchthreshold"));
+
+        this.shiftduration = Duration.between(shiftstart, shiftstop).toMinutes();
+        this.lunchduration = Duration.between(lunchstart, lunchstop).toMinutes();
     }
 
 
@@ -28,9 +31,9 @@ public class Shift {
     private int roundinterval;
     private int graceperiod;
     private int dockpenalty;
-    private Duration lunchduration;
-    private Duration shiftduration;
-    private int lunchthreshhold;
+    private long lunchduration;
+    private long shiftduration;
+    private int lunchthreshold;
 
     public int getId() {
         return id;
@@ -104,27 +107,34 @@ public class Shift {
         this.dockpenalty = dockpenalty;
     }
 
-    public Duration getLunchduration() {
+    public long getLunchduration() {
         return lunchduration;
     }
 
-    public void setLunchduration(Duration lunchduration) {
+    public void setLunchduration(long lunchduration) {
         this.lunchduration = lunchduration;
     }
 
-    public Duration getShiftduration() {
+    public long getShiftduration() {
         return shiftduration;
     }
 
-    public void setShiftduration(Duration shiftduration) {
+    public void setShiftduration(long shiftduration) {
         this.shiftduration = shiftduration;
     }
 
-    public int getLunchthreshhold() {
-        return lunchthreshhold;
+    public int getLunchthreshold() {
+        return lunchthreshold;
     }
 
-    public void setLunchthreshhold(int lunchthreshhold) {
-        this.lunchthreshhold = lunchthreshhold;
+    public void setLunchthreshold(int lunchthreshold) {
+        this.lunchthreshold = lunchthreshold;
+    }
+
+    @Override
+    public String toString() {
+        return description  + ": " + shiftstart + " - " + shiftstop +
+                " (" + shiftduration + " minutes); Lunch: " + lunchstart +
+                " - " + lunchstop + " (" + lunchduration + " minutes)";
     }
 }
