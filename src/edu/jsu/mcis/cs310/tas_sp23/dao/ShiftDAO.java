@@ -81,13 +81,12 @@ public class ShiftDAO {
         ResultSet rs = null;
 
         try {
-
             Connection conn = daoFactory.getConnection();
 
             if (conn.isValid(0)) {
 
                 ps = conn.prepareStatement(QUERY_FIND_BY_EMPLOYEE_ID);
-                ps.setString(1, String.valueOf(badge));
+                ps.setString(1, String.valueOf(badge.getId()));
 
                 boolean hasresults = ps.execute();
 
@@ -96,12 +95,11 @@ public class ShiftDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-
-                        find((Badge) rs);
+                        String shiftid = rs.getString("shiftid");
+                        shift = find(Integer.parseInt(shiftid));
                     }
                 }
             }
-
         } catch (SQLException e) {
             throw new DAOException(e.getMessage());
 

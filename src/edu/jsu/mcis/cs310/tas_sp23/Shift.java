@@ -24,16 +24,9 @@ public class Shift {
 
     private int id;
     private String description;
-    private LocalTime shiftstart;
-    private LocalTime shiftstop;
-    private LocalTime lunchstart;
-    private LocalTime lunchstop;
-    private int roundinterval;
-    private int graceperiod;
-    private int dockpenalty;
-    private long lunchduration;
-    private long shiftduration;
-    private int lunchthreshold;
+    private LocalTime shiftstart, shiftstop, lunchstart, lunchstop;
+    private int graceperiod, dockpenalty, roundinterval, lunchthreshold;
+    private long lunchduration, shiftduration;
 
     public int getId() {
         return id;
