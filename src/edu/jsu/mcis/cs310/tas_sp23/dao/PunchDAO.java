@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs310.tas_sp23.dao;
 
+import edu.jsu.mcis.cs310.tas_sp23.EventType;
 import edu.jsu.mcis.cs310.tas_sp23.Punch;
 
 import java.sql.Connection;
@@ -38,11 +39,12 @@ public class PunchDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-                        String id = rs.getString("id");
-                        String terminalid = rs.getString("terminalid");
-                        String badgeid = rs.getString("badgeid");
+                        int id = rs.getInt("id");
+                        int terminalid = rs.getInt("terminalid");
+                        int badgeid = rs.getInt("badgeid");
                         String timestamp = rs.getString("timestamp");
-                        String eventtypeid = rs.getString("eventtypeid");
+                        int eventtypeid = rs.getString("eventtypeid");
+                        punch = new Punch (id, terminalid, badgeid, timestamp, eventtypeid);
                     }
                 }
             }

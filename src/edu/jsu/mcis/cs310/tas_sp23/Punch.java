@@ -91,4 +91,22 @@ public class Punch {
     public Badge getBadge() {
         return badge;
     }
+    
+    
+    public String printOriginal() {
+
+        //StringBuilder s = new StringBuilder();
+        int x = eventtypeid;
+        String eventType = new String();
+         if (x == 0){
+            eventType = "CLOCK OUT:";
+        } else if (x == 1) {
+            eventType = "CLOCK IN:";
+        } else {
+            eventType = "TIME OUT:";
+        }
+
+        return badgeid  + " " + eventType + adjustedtimestamp;
+
+    }
 }
