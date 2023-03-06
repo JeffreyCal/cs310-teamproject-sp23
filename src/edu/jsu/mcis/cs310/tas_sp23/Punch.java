@@ -1,23 +1,28 @@
 package edu.jsu.mcis.cs310.tas_sp23;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Punch {
 
-    int id, terminalid, badgeid, eventtypeid;
-    EventType punchtype;
-    LocalDateTime timestamp, adjustedtimestamp;
-    PunchAdjustmentType adjustmenttype;
-    Badge badge;
+    private int id, terminalid;
+    private String badgeid;
+    private EventType punchtype;
+    private LocalDateTime timestamp, adjustedtimestamp;
+    private PunchAdjustmentType adjustmenttype;
+    private Badge badge;
 
 
-    Punch(int terminalid, Badge badge, EventType punchtype) {
+    public Punch(int terminalid, Badge badge, EventType punchtype) {
 
     }
 
-    Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype) {
-
+    public Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype) {
+        this.id = id;
+        this.terminalid = terminalid;
+        this.badgeid = badge.getId();
+        this.timestamp = originaltimestamp;
+        this.punchtype = punchtype;
     }
 
     public int getId() {
@@ -36,21 +41,9 @@ public class Punch {
         this.terminalid = terminalid;
     }
 
-    public int getBadgeid() {
-        return badgeid;
-    }
+     public String getBadgeid() { return badgeid; }
 
-    public void setBadgeid(int badgeid) {
-        this.badgeid = badgeid;
-    }
-
-    public int getEventtypeid() {
-        return eventtypeid;
-    }
-
-    public void setEventtypeid(int eventtypeid) {
-        this.eventtypeid = eventtypeid;
-    }
+     public void setBadgeid(String badgeid) {this.badgeid = badgeid; }
 
     public EventType getPunchtype() {
         return punchtype;
@@ -94,19 +87,16 @@ public class Punch {
     
     
     public String printOriginal() {
+        
+        StringBuilder s = new StringBuilder();
 
-        //StringBuilder s = new StringBuilder();
-        int x = eventtypeid;
-        String eventType = new String();
-         if (x == 0){
-            eventType = "CLOCK OUT:";
-        } else if (x == 1) {
-            eventType = "CLOCK IN:";
-        } else {
-            eventType = "TIME OUT:";
-        }
-
-        return badgeid  + " " + eventType + adjustedtimestamp;
+         
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+        String formatted = timestamp.format(formatter);
+        
+        s.append("#").append(badgeid).append(" ").append(punchtype).append(": ").append(formatted);
+        
+        return s.toString().toUpperCase();
 
     }
 }

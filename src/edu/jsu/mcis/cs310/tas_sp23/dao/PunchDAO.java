@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs310.tas_sp23.dao;
 
+import edu.jsu.mcis.cs310.tas_sp23.Badge;
 import edu.jsu.mcis.cs310.tas_sp23.EventType;
 import edu.jsu.mcis.cs310.tas_sp23.Punch;
 
@@ -7,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class PunchDAO {
 
@@ -23,7 +25,7 @@ public class PunchDAO {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        
         try {
             Connection conn = daoFactory.getConnection();
 
@@ -39,12 +41,15 @@ public class PunchDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
+                        BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
                         int id = rs.getInt("id");
                         int terminalid = rs.getInt("terminalid");
-                        int badgeid = rs.getInt("badgeid");
-                        String timestamp = rs.getString("timestamp");
-                        int eventtypeid = rs.getString("eventtypeid");
-                        punch = new Punch (id, terminalid, badgeid, timestamp, eventtypeid);
+                        String badgeid = rs.getString("badgeid");
+                        Badge badge = badgeDAO.find(badgeid);
+                        LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+                        EventType punchtype = EventType.values()[rs.getInt("eventtypeid")];
+                        punch = new Punch (id, terminalid, badge, timestamp, punchtype);
+                        
                     }
                 }
             }
