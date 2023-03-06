@@ -84,8 +84,7 @@ public class Punch {
     public Badge getBadge() {
         return badge;
     }
-    
-    
+
     public String printOriginal() {
         
         StringBuilder s = new StringBuilder();
