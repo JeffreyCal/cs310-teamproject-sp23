@@ -5,19 +5,24 @@ import java.time.LocalTime;
 
 public class Punch {
 
-    int id, terminalid, badgeid, eventtypeid;
+    int id, terminalid, eventtypeid;
+    String badgeid;
     EventType punchtype;
     LocalDateTime timestamp, adjustedtimestamp;
     PunchAdjustmentType adjustmenttype;
     Badge badge;
 
 
-    Punch(int terminalid, Badge badge, EventType punchtype) {
+    Punch(int terminalid, Badge badge, int punchtype) {
 
     }
 
-    Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype) {
-
+    public Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, int punchtype) {
+        this.id = id;
+        this.terminalid = terminalid;
+        this.badgeid = badge.getId();
+        this.timestamp = originaltimestamp;
+        this.eventtypeid = punchtype;
     }
 
     public int getId() {
@@ -36,13 +41,9 @@ public class Punch {
         this.terminalid = terminalid;
     }
 
-    public int getBadgeid() {
-        return badgeid;
-    }
+    public String getBadgeid() { return badgeid; }
 
-    public void setBadgeid(int badgeid) {
-        this.badgeid = badgeid;
-    }
+    public void setBadgeid(String badgeid) {this.badgeid = badgeid; }
 
     public int getEventtypeid() {
         return eventtypeid;
@@ -91,19 +92,18 @@ public class Punch {
     public Badge getBadge() {
         return badge;
     }
-    
-    
+
     public String printOriginal() {
 
         //StringBuilder s = new StringBuilder();
         int x = eventtypeid;
         String eventType = new String();
          if (x == 0){
-            eventType = "CLOCK OUT:";
+            eventType = "#CLOCK OUT:";
         } else if (x == 1) {
-            eventType = "CLOCK IN:";
+            eventType = "#CLOCK IN:";
         } else {
-            eventType = "TIME OUT:";
+            eventType = "#TIME OUT:";
         }
 
         return badgeid  + " " + eventType + adjustedtimestamp;
