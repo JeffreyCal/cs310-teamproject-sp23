@@ -41,9 +41,13 @@ public class Punch {
         this.terminalid = terminalid;
     }
 
-     public String getBadgeid() { return badgeid; }
+     public String getBadgeid() { 
+         return badgeid; 
+     }
 
-     public void setBadgeid(String badgeid) {this.badgeid = badgeid; }
+     public void setBadgeid(String badgeid) {
+         this.badgeid = badgeid; 
+     }
 
     public EventType getPunchtype() {
         return punchtype;
