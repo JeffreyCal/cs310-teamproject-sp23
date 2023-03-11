@@ -81,4 +81,18 @@ public class EmployeeFindTest {
 
     }
     
+    @Test
+    public void testFindEmployee5() {
+        
+        EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
+
+        /* Retrieve Employee from Database (by ID) */
+
+        Employee e3 = employeeDAO.find(57);
+
+        /* Compare to Expected Values */
+        
+        assertEquals("ID #57: Dent, Judy E (#8709982E), Type: Full-Time, Department: Assembly, Active: 06/27/2016", e3.toString());
+
+    }
 }

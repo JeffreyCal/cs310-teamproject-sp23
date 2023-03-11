@@ -49,7 +49,7 @@ public class EmployeeDAO {
 
                     while (rs.next()) {
 
-                        //code goes here to get the info out
+                        
                         int idnum = id;
                         EmployeeType type = EmployeeType.values()[rs.getInt("employeetypeid")];
                         LocalDateTime active = rs.getTimestamp("active").toLocalDateTime();
