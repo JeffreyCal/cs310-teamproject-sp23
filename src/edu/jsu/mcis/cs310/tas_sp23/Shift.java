@@ -1,10 +1,17 @@
 package edu.jsu.mcis.cs310.tas_sp23;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
 public class Shift {
-
+    private int id;
+    private String description;
+    private LocalTime shiftstart, shiftstop, lunchstart, lunchstop;
+    private int graceperiod, dockpenalty, roundinterval, lunchthreshold;
+    private long lunchduration, shiftduration;
+    
+    
     public Shift(HashMap<String, String> shiftrules) {
         this.id = Integer.parseInt(shiftrules.get("id"));
         this.description = (shiftrules.get("description"));
@@ -17,16 +24,20 @@ public class Shift {
         this.dockpenalty = Integer.parseInt(shiftrules.get("dockpenalty"));
         this.lunchthreshold = Integer.parseInt(shiftrules.get("lunchthreshold"));
 
-        this.shiftduration = Duration.between(shiftstart, shiftstop).toMinutes();
-        this.lunchduration = Duration.between(lunchstart, lunchstop).toMinutes();
+        Duration shiftDur = Duration.between(shiftstart, shiftstop);
+        if (shiftDur.isNegative()) {
+            shiftDur = shiftDur.plusDays(1);
+        }
+        this.shiftduration = shiftDur.toMinutes();
+        
+        Duration lunchDur = Duration.between(lunchstart, lunchstop);
+        if (lunchDur.isNegative()) {
+            lunchDur = lunchDur.plusDays(1);
+        }
+        this.lunchduration = lunchDur.toMinutes();
+        
     }
 
-
-    private int id;
-    private String description;
-    private LocalTime shiftstart, shiftstop, lunchstart, lunchstop;
-    private int graceperiod, dockpenalty, roundinterval, lunchthreshold;
-    private long lunchduration, shiftduration;
 
     public int getId() {
         return id;
@@ -123,11 +134,20 @@ public class Shift {
     public void setLunchthreshold(int lunchthreshold) {
         this.lunchthreshold = lunchthreshold;
     }
-
+    
     @Override
     public String toString() {
-        return description  + ": " + shiftstart + " - " + shiftstop +
-                " (" + shiftduration + " minutes); Lunch: " + lunchstart +
-                " - " + lunchstop + " (" + lunchduration + " minutes)";
+        
+        StringBuilder s = new StringBuilder();
+        
+        // "Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)"
+        
+        s.append(description).append(": ").append(shiftstart).append(" - ");
+        s.append(shiftstop).append(" (").append(shiftduration).append(" minutes); ");
+        s.append("Lunch: ").append(lunchstart).append(" - ").append(lunchstop).append(" (");
+        s.append(lunchduration).append(" minutes)");
+        
+        return s.toString();
+        
     }
 }
