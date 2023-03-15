@@ -20,88 +20,73 @@ public class Employee {
         this.middlename = middlename;
         this.lastname = lastname;
         this.badgeid = badge.getId();
+        this.department = department;
         this.workstation = department.getDescription();
         this.shiftType = shift.getDescription();
         this.type = type;
     }
 
-    public int getId(int id){
+    public Integer getId() {
         return id;
     }
-    
-    public void setId(int id){
-        this.id = id;
-    }
-    
-    public LocalDateTime getActive(LocalDateTime active){
-        return active;
-    }
-    
-    public void setActive (LocalDateTime active){
-        this.active = active;
-    }
-    
-    public String getFirstName (String firstname){
+
+    public String getFirstname() {
         return firstname;
     }
-    
-    public void setFirstName(String firstname){
-        this.firstname = firstname;
-    }
-    
-    public String getMiddleName(String middlename){
+
+    public String getMiddlename() {
         return middlename;
     }
-    
-    public void setMiddleName(String middlename){
-        this.middlename = middlename;
-    }
-    
-    public String getLastName(String lastname){
+
+    public String getLastname() {
         return lastname;
     }
-    
-    public void setBadge(Badge badge){
-        this.badge = badge;
+
+    public LocalDateTime getActive() {
+        return active;
     }
-    
-    public Badge getBadge(Badge badge){
+
+    public Badge getBadge() {
         return badge;
     }
-    
-    public void setDeparment (Department department){
-        this.department = department;
-    }
-    
-    public Department getDepartment(Department department){
+
+    public Department getDepartment() {
         return department;
     }
-    
-    public void setShift(Shift shift){
-        this.shift = shift ;
-    }
-    
-    public Shift getShift(Shift shift){
+
+    public Shift getShift() {
         return shift;
     }
-    
-    public void setType(EmployeeType type){
-        this.type = type ;
-    }
-    
-    public EmployeeType getType(EmployeeType type){
+
+    public EmployeeType getEmployeeType() {
         return type;
     }
 
     @Override
     public String toString() {
-        
+
         StringBuilder s = new StringBuilder();
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        String formatted = active.format(formatter);
-        
-        s.append("ID #").append(id).append(": ").append(lastname).append(", ").append(firstname).append(" ").append(middlename).append(" (#").append(badgeid).append("), Type: ").append(type).append(", Department: ").append(workstation).append(", Active: ").append(formatted);
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+        // "ID #82: Taylor, Jennifer T (#ADD650A8), Type: Full-Time, Department: Office, Active: 02/13/2016"
+        s
+            .append("ID #")
+            .append(id)
+            .append(": ")
+            .append(lastname)
+            .append(", ")
+            .append(firstname)
+            .append(" ")
+            .append(middlename)
+            .append(" (#")
+            .append(badge.getId())
+            .append("), Type: ")
+            .append(type)
+            .append(", Department: ")
+            .append(department.getDescription())
+            .append(", Active: ")
+            .append(active.format(format));
 
         return s.toString();
     }

@@ -5,23 +5,29 @@ import java.time.format.DateTimeFormatter;
 
 public class Punch {
 
-    private int id, terminalid;
+    private Integer id, terminalid;
     private String badgeid;
     private EventType punchtype;
-    private LocalDateTime timestamp, adjustedtimestamp;
+    private LocalDateTime timestamp, originaltimestamp, adjustedtimestamp;
     private PunchAdjustmentType adjustmenttype;
     private Badge badge;
 
 
     public Punch(int terminalid, Badge badge, EventType punchtype) {
-
+        this.id = null;
+        this.terminalid = terminalid;
+        this.badge = badge;
+        this.punchtype = punchtype;
+        this.originaltimestamp = LocalDateTime.now();
     }
 
     public Punch(int id, int terminalid, Badge badge, LocalDateTime originaltimestamp, EventType punchtype) {
         this.id = id;
         this.terminalid = terminalid;
-        this.badgeid = badge.getId();
-        this.timestamp = originaltimestamp;
+        this.badge = badge;
+        //this.badgeid = badge.getId();
+        this.originaltimestamp = LocalDateTime.now();
+        //this.timestamp = timestamp;
         this.punchtype = punchtype;
     }
 
@@ -58,7 +64,7 @@ public class Punch {
     }
 
     public LocalDateTime getOriginaltimestamp() {
-        return timestamp;
+        return originaltimestamp;
     }
 
     public LocalDateTime getTimestamp() {
