@@ -1,7 +1,7 @@
 package edu.jsu.mcis.cs310.tas_sp23;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.*;
+
 
 public class Punch {
 
@@ -11,6 +11,13 @@ public class Punch {
     private LocalDateTime timestamp, originaltimestamp, adjustedtimestamp;
     private PunchAdjustmentType adjustmenttype;
     private Badge badge;
+    
+    enum LunchStatus {
+        HAPPENING,
+        HAPPENED,
+        NOT_HAPPENING,
+        INAPPLICABLE
+    };
 
 
     public Punch(int terminalid, Badge badge, EventType punchtype) {
@@ -108,4 +115,9 @@ public class Punch {
         return s.toString().toUpperCase();
 
     }
+
+    public void adjust(Shift s) {
+        
+    }
+
 }
