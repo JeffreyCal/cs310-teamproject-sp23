@@ -80,7 +80,7 @@ public class Employee {
             .append(" ")
             .append(middlename)
             .append(" (#")
-            .append(badge.getId())
+            .append(badgeid)
             .append("), Type: ")
             .append(type)
             .append(", Department: ")
