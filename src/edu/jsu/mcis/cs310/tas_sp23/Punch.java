@@ -1,6 +1,7 @@
 package edu.jsu.mcis.cs310.tas_sp23;
 
 import java.time.*;
+import java.time.format.*;
 
 
 public class Punch {
@@ -11,8 +12,9 @@ public class Punch {
     private LocalDateTime timestamp, originaltimestamp, adjustedtimestamp;
     private PunchAdjustmentType adjustmenttype;
     private Badge badge;
+    private LunchStatus adjustedlunchstatus;
     
-    enum LunchStatus {
+    public enum LunchStatus {
         HAPPENING,
         HAPPENED,
         NOT_HAPPENING,
@@ -101,6 +103,10 @@ public class Punch {
     public Badge getBadge() {
         return badge;
     }
+    
+    public LunchStatus getAdjustedLunchStatus(){
+        return adjustedlunchstatus;
+    }
 
     public String printOriginal() {
         
@@ -117,7 +123,23 @@ public class Punch {
     }
 
     public void adjust(Shift s) {
-        
+        if(originaltimestamp.getDayOfWeek() == DayOfWeek.SATURDAY || originaltimestamp.getDayOfWeek() == DayOfWeek.SUNDAY ){
+           adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+           adjustedlunchstatus = LunchStatus.INAPPLICABLE;
+        }
+        else {
+            switch(punchtype){
+                case CLOCK_IN:
+                    //if they clock in after lunch, set adjustmenttype to lunchstop
+                    //else if clock in time is after shiftstart
+                        //if clocking in between the start of their shift and the start of shift + the grace period, set adjustment type to shiftstart
+                        //else adjustmenttype = dock
+                    //else adjustment type round
+                    break;
+                case CLOCK_OUT:
+                    break;
+            }
+        }
     }
 
 }
