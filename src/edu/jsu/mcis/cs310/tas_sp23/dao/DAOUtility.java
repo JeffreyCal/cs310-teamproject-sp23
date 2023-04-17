@@ -5,10 +5,7 @@ import java.util.*;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
-import edu.jsu.mcis.cs310.tas_sp23.Badge;
-import edu.jsu.mcis.cs310.tas_sp23.EventType;
 import edu.jsu.mcis.cs310.tas_sp23.Punch;
-import edu.jsu.mcis.cs310.tas_sp23.PunchAdjustmentType;
 
 /**
  * 
@@ -19,35 +16,29 @@ import edu.jsu.mcis.cs310.tas_sp23.PunchAdjustmentType;
  */
 public final class DAOUtility {
 
-    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist){
+    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
         
-        JsonArray jsonData = new JsonArray();  
-        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonArr = new JsonArray();
         
         for (int x = 0; x < dailypunchlist.size(); x++){
             
             Punch punch = dailypunchlist.get(x);
             
-            jsonObject.put("id", String.valueOf(punch.getId()));
-            
-            jsonObject.put("terminalid", String.valueOf(punch.getTerminalid()));
-            
-            jsonObject.put("badgeid", String.valueOf(punch.getBadgeid()));
+            JsonObject obj = new JsonObject();
 
-            jsonObject.put("punchtype", String.valueOf(punch.getPunchtype()));
+            obj.put("id", String.valueOf(punch.getId()));
+            obj.put("badgeid", String.valueOf(punch.getBadgeid()));
+            obj.put("punchtype", String.valueOf(punch.getPunchtype()));
+            obj.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
+            obj.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp()));
+            obj.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp()));
             
-            jsonObject.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp()));
-            
-            jsonObject.put("adjustmenttype", String.valueOf(punch.getAdjustmenttype()));
-            
-            jsonObject.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp()));
-            
-            jsonData.add(jsonObject);
-
+            jsonArr.add(obj);
         }
-        
-        String json = Jsoner.serialize(jsonData);
+
+        String json = Jsoner.serialize(jsonArr);
         
         return json;
     }
+
 }
