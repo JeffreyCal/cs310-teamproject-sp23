@@ -4,6 +4,15 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
+/**
+ * The Shift model class contains information about 
+ * a shift rule set given in the database as well as
+ * the durations of a shift and lunch.
+ * 
+ * @author Christopher Adkins
+ * @author Raelee Shuler
+ */
+
 public class Shift {
     private int id;
     private String description;

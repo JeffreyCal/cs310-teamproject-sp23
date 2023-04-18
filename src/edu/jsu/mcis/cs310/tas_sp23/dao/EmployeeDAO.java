@@ -12,6 +12,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+/**
+ * The EmployeeDAO class works with the data in
+ * each record in the database by retrieving
+ * the record and instantiating it as an individual
+ * model object.
+ * 
+ * @author Jeffrey Patterson
+ */
+
 public class EmployeeDAO {
 
 

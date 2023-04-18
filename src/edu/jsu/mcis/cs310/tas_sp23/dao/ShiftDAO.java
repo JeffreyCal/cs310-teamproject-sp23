@@ -9,6 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+/**
+ * The ShiftDAO class retrieves the shift data
+ * from the database and passes it to and from the
+ * methods in the TAS libraries.
+ * 
+ * @author Christopher Adkins
+ */
+
 public class ShiftDAO {
 
     private static final String QUERY_FIND_BY_ID = "SELECT * FROM shift WHERE id = ?";
