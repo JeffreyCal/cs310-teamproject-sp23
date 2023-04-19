@@ -38,6 +38,7 @@ public class Punch {
         this.originaltimestamp = originaltimestamp;
         this.timestamp = originaltimestamp;
         this.punchtype = punchtype;
+        adjustedtimestamp = originaltimestamp;
     }
 
     public int getId() {
@@ -134,15 +135,15 @@ public class Punch {
 
         if (originaltimestamp.getDayOfWeek() == DayOfWeek.SATURDAY || originaltimestamp.getDayOfWeek() == DayOfWeek.SUNDAY) {
             adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-            int remainderSec = originalTimeSec % roundInt;
-            if (remainderSec < roundInt / 2) {
-                int roundedTime = originalTimeSec - remainderSec;
-                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
-            } else {
-                int roundedTime = originalTimeSec + remainderSec;
-                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+            int adjustedsec;
+            if ((originalTimeSec % roundInt) < (roundInt / 2)){
+                adjustedsec = (Math.round(originalTimeSec/roundInt) * roundInt);
             }
-            adjustedlunchstatus = LunchStatus.INAPPLICABLE;
+         else {
+            adjustedsec = (Math.round (originalTimeSec / roundInt) * roundInt) + roundInt;
+        }
+            adjustedtimestamp = adjustedtimestamp.plusSeconds(adjustedsec - originalTimeSec);
+            adjustedtimestamp = adjustedtimestamp.withSecond(0).withNano(0);
         } else {
             switch (punchtype) {
                 case CLOCK_IN:
@@ -164,10 +165,10 @@ public class Punch {
                             
                         } else {
                             adjustmenttype = PunchAdjustmentType.NONE;
-                            adjustedtimestamp = originaltimestamp;
+                            adjustedtimestamp = originaltimestamp.withSecond(0).withNano(0);;
                         }
                     } else if (originalTimeSec < lunchStart) {
-                        if (shiftStart + gracePeriod < originalTimeSec) {
+                        if (shiftStart + gracePeriod < originalTimeSec && originalTimeSec <= shiftStart + dockPen) {
                             adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
                             int dock = shiftStart + dockPen;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(dock).atDate(originaltimestamp.toLocalDate());
@@ -182,7 +183,19 @@ public class Punch {
                     break;
                 case CLOCK_OUT:
                     if (originalTimeSec > shiftStop) {
-                        if (originalTimeSec - shiftStop > roundInt) {
+                        //First 7.5 mins
+                        if ((originalTimeSec - shiftStop) > (roundInt / 2)) {
+                            adjustmenttype = PunchAdjustmentType.NONE;
+                            int remainderSec = originalTimeSec % roundInt;
+                            if (remainderSec < roundInt / 2) {
+                                int roundedTime = originalTimeSec - remainderSec;
+                                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+                            } else {
+                                int roundedTime = originalTimeSec + remainderSec;
+                                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+                            }
+                            //round for after first round interval
+                        }else if ((originalTimeSec - shiftStop) > roundInt) {
                             adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                             int remainderSec = originalTimeSec % roundInt;
                             if (remainderSec < roundInt / 2) {
@@ -203,27 +216,38 @@ public class Punch {
                         if (shiftStop - gracePeriod <= originalTimeSec) {
                             adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(shiftStop).atDate(originaltimestamp.toLocalDate());
-                        }else {
+                        }else if (originalTimeSec < (shiftStop - gracePeriod) && originalTimeSec >= (shiftStop - dockPen)){
                             adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
-                            int dock = shiftStart - dockPen;
+                            int dock = shiftStop - dockPen;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(dock).atDate(originaltimestamp.toLocalDate());
+                        } else {
+                            adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+                            int remainderSec = originalTimeSec % roundInt;
+                            if (remainderSec < roundInt / 2) {
+                                int roundedTime = originalTimeSec - remainderSec;
+                                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+                            } else {
+                                int roundedTime = originalTimeSec + remainderSec;
+                                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+                            }
                         }
                     }
                     break;
             }
         }
+        adjustedtimestamp = adjustedtimestamp.withSecond(0).withNano(0);
     }
     
     public String printAdjusted() {
         
         StringBuilder s = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String formatted = adjustedtimestamp.format(formatter);
+        String formatted = adjustedtimestamp.format(formatter).toUpperCase();
         String atype = adjustmenttype.toString();
        
         s.append("#").append(badgeid).append(" ").append(punchtype).append(": ").append(formatted).append(" (").append(atype).append(")");
         
-        return s.toString().toUpperCase();
+        return s.toString();
 
     }
 }
