@@ -144,23 +144,26 @@ public class Punch {
         if (originaltimestamp.getDayOfWeek() == DayOfWeek.SATURDAY || originaltimestamp.getDayOfWeek() == DayOfWeek.SUNDAY) {
             adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
             int adjustedsec;
-            if ((originalTimeSec % roundInt) < (roundInt / 2)){
-                adjustedsec = (Math.round(originalTimeSec/roundInt) * roundInt);
+            if ((originalTimeSec % roundInt) < (roundInt / 2)) {
+                adjustedsec = (Math.round(originalTimeSec / roundInt) * roundInt);
+            } else {
+                adjustedsec = (Math.round(originalTimeSec / roundInt) * roundInt) + roundInt;
             }
-         else {
-            adjustedsec = (Math.round (originalTimeSec / roundInt) * roundInt) + roundInt;
-        }
             adjustedtimestamp = adjustedtimestamp.plusSeconds(adjustedsec - originalTimeSec);
             adjustedtimestamp = adjustedtimestamp.withSecond(0).withNano(0);
         } else {
             switch (punchtype) {
                 case CLOCK_IN:
-
+                    //If time is before shift start
                     if (originalTimeSec < shiftStart) {
+                        //if round interval is greater than difference between time and shift start
                         if (roundInt >= shiftStart - originalTimeSec) {
                             adjustmenttype = PunchAdjustmentType.SHIFT_START;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(shiftStart).atDate(originaltimestamp.toLocalDate());
+                            //If round interval is greater than time between timestamp and shift start
                         } else if (roundInt < shiftStart - originalTimeSec) {
+                            System.out.println(originalTimeSec + "Original " + originaltimestamp);
+                            System.out.println(shiftStart + "shiftstart " + s.getShiftstart());
                             adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                             int remainderSec = originalTimeSec % roundInt;
                             if (remainderSec < roundInt / 2) {
@@ -170,29 +173,46 @@ public class Punch {
                                 int roundedTime = originalTimeSec + remainderSec;
                                 adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
                             }
-                            
-                        } else {
+
+                        } //All else should be none
+                        else {
                             adjustmenttype = PunchAdjustmentType.NONE;
                             adjustedtimestamp = originaltimestamp.withSecond(0).withNano(0);;
                         }
-                    } else if (originalTimeSec < lunchStart) {
-                        if (shiftStart + gracePeriod < originalTimeSec && originalTimeSec <= shiftStart + dockPen) {
+                    }// if timestamp is before lunch
+                    else if (originalTimeSec < lunchStart) {
+                        //if time stamp is on the first minute after shift start
+                        if ((originalTimeSec) < (shiftStart + (roundInt / 15))) {
+                            adjustmenttype = PunchAdjustmentType.NONE;
+                            int remainderSec = originalTimeSec % roundInt;
+                            if (remainderSec < roundInt / 2) {
+                                int roundedTime = originalTimeSec - remainderSec;
+                                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+                            } else {
+                                int roundedTime = originalTimeSec + remainderSec;
+                                adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
+                            }
+                        } //If the time stamp is after grace period and before dock pen time
+                        else if (shiftStart + gracePeriod < originalTimeSec && originalTimeSec <= shiftStart + dockPen) {
                             adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
                             int dock = shiftStart + dockPen;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(dock).atDate(originaltimestamp.toLocalDate());
-                        } else {
+                        } //All else should be shift start
+                        else {
                             adjustmenttype = PunchAdjustmentType.SHIFT_START;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(shiftStart).atDate(originaltimestamp.toLocalDate());
                         }
-                    } else if (originalTimeSec > lunchStart) {
+                    } //If time stamp is sftaer lunch start
+                    else if (originalTimeSec > lunchStart) {
                         adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                         adjustedtimestamp = LocalTime.ofSecondOfDay(lunchStop).atDate(originaltimestamp.toLocalDate());
                     }
                     break;
                 case CLOCK_OUT:
+                    //If timestamp is after shift stop
                     if (originalTimeSec > shiftStop) {
-                        //First 7.5 mins
-                        if ((originalTimeSec - shiftStop) > (roundInt / 2)) {
+                        //Clock out for same minute of shift stop
+                        if ((originalTimeSec) < (shiftStop + (roundInt / 15))) {
                             adjustmenttype = PunchAdjustmentType.NONE;
                             int remainderSec = originalTimeSec % roundInt;
                             if (remainderSec < roundInt / 2) {
@@ -202,8 +222,11 @@ public class Punch {
                                 int roundedTime = originalTimeSec + remainderSec;
                                 adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
                             }
-                            //round for after first round interval
-                        }else if ((originalTimeSec - shiftStop) > roundInt) {
+
+                        }//round for after first round interval
+                        else if ((originalTimeSec) > (shiftStop + roundInt)) {
+                            System.out.println(originalTimeSec + "Original " + originaltimestamp);
+                            System.out.println(shiftStop + "shiftstop " + s.getShiftstop());
                             adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                             int remainderSec = originalTimeSec % roundInt;
                             if (remainderSec < roundInt / 2) {
@@ -213,22 +236,31 @@ public class Punch {
                                 int roundedTime = originalTimeSec + remainderSec;
                                 adjustedtimestamp = LocalTime.ofSecondOfDay(roundedTime).atDate(originaltimestamp.toLocalDate());
                             }
-                        } else {
+
+                        } //Everything else should be shift stop
+                        else {
                             adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(shiftStop).atDate(originaltimestamp.toLocalDate());
                         }
-                    } else if (originalTimeSec > lunchStart && originalTimeSec < lunchStop) {
+                    } //If its between lunch
+                    else if (originalTimeSec > lunchStart && originalTimeSec < lunchStop) {
                         adjustmenttype = PunchAdjustmentType.LUNCH_START;
                         adjustedtimestamp = LocalTime.ofSecondOfDay(lunchStart).atDate(originaltimestamp.toLocalDate());
-                    } else if (originalTimeSec < shiftStop) {
+
+                    }//If its before shift stop
+                    else if (originalTimeSec < shiftStop) {
+                        //If it's in the grace period
                         if (shiftStop - gracePeriod <= originalTimeSec) {
                             adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(shiftStop).atDate(originaltimestamp.toLocalDate());
-                        }else if (originalTimeSec < (shiftStop - gracePeriod) && originalTimeSec >= (shiftStop - dockPen)){
+
+                        }//If its before grace period and after dock period
+                        else if (originalTimeSec < (shiftStop - gracePeriod) && originalTimeSec >= (shiftStop - dockPen)) {
                             adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
                             int dock = shiftStop - dockPen;
                             adjustedtimestamp = LocalTime.ofSecondOfDay(dock).atDate(originaltimestamp.toLocalDate());
-                        } else {
+                        } //Interval round for everything else
+                        else {
                             adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                             int remainderSec = originalTimeSec % roundInt;
                             if (remainderSec < roundInt / 2) {
