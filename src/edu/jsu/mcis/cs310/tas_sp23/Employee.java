@@ -3,6 +3,14 @@ package edu.jsu.mcis.cs310.tas_sp23;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The Employee model class is used to
+ * represent the employees that are stored
+ * in the database.
+ * 
+ * @author Jeffrey Patterson
+ */
+
 public class Employee {
     
     private int id;

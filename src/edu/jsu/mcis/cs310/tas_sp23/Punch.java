@@ -3,6 +3,14 @@ package edu.jsu.mcis.cs310.tas_sp23;
 import java.time.*;
 import java.time.format.*;
 
+/**
+ * The Punch model class contains information about
+ * punches given in the database including 
+ * original timestamps and adjusted timestamps.
+ * 
+ * @author Jeffrey Patterson
+ * @author Megan 
+ */
 
 public class Punch {
 

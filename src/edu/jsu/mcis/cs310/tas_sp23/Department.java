@@ -1,5 +1,13 @@
 package edu.jsu.mcis.cs310.tas_sp23;
 
+/**
+ * The Department model class is used to
+ * represent the departments that are stored 
+ * in the database.
+ * 
+ * @author Jefferey Patterson
+ */
+
 public class Department {
     private int departmentid, terminalid;
     private String description;

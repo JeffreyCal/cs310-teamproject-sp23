@@ -7,6 +7,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.sql.*;
 
+/**
+ * The PunchDAO class retrieves the punch data
+ * from the database and passes it to and from the
+ * methods in the TAS libraries.
+ * 
+ * @author Jeffrey Patterson
+ * @author Megan
+ */
+
 public class PunchDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
@@ -21,6 +30,14 @@ public class PunchDAO {
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * This method is used to find and return individual 
+     * model objects from the database.
+     * 
+     * @param id Represents employee ID
+     * @return 
+     */
+    
     public Punch find(int id) {
 
         Punch punch = null;
@@ -99,7 +116,15 @@ public class PunchDAO {
 
     }
 
-
+    /**
+     * This method is used to retrieve all the punches entered by
+     * an employee for a single day.
+     * 
+     * @param badge Represents the employee badge.
+     * @param date Represents specified day.
+     * @return Returns punches for a single day.
+     */
+    
     public ArrayList list(Badge badge, LocalDate date) {
         ArrayList<Punch> list = new ArrayList();
 
@@ -187,6 +212,15 @@ public class PunchDAO {
 
     }
 
+    /**
+     * This method is used to retrieve all the punches entered by
+     * an employee within a range of dates.
+     * 
+     * @param badge Represents the employee badge.
+     * @param lowerDate Represents the beginning of the date range.
+     * @param upperDate Represents the ending of the date range.
+     * @return Returns punches within a range of dates.
+     */
     
     public ArrayList list(Badge badge, LocalDate lowerDate, LocalDate upperDate) {
         ArrayList<Punch> list = new ArrayList();
@@ -214,7 +248,13 @@ public class PunchDAO {
         return list;
     }
 
-
+    /**
+     * This method is used to add new punches to the database.
+     * 
+     * @param punch Represents a new punch.
+     * @return Returns the numeric ID retrieved from the database as an integer.
+     */
+    
     public int create(Punch punch) {
 
         int punchId = 0;
